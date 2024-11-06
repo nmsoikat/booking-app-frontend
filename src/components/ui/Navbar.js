@@ -1,13 +1,14 @@
 import React from 'react'
-import { Link, Navigate } from 'react-router-dom'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 
 export default function Navbar() {
   const loginUserRole = sessionStorage.getItem('role')
+  const navigate = useNavigate();
 
   const logoutHandler = () => {
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("role");
-    return <Navigate to="/" />;
+    return navigate("/");
   };
 
   return (
@@ -24,7 +25,7 @@ export default function Navbar() {
 
           {loginUserRole === 'admin' && <Link to="/admin-dashboard" className="text-white">Admin Dashboard</Link>}
           {loginUserRole === 'user' && <Link to="/user-profile" className="text-white">Profile</Link>}
-          {loginUserRole && <Link to="/user-profile" className="text-white" onClick={logoutHandler}>Logout</Link>}
+          {loginUserRole && <span className="text-white cursor-pointer" onClick={logoutHandler}>Logout</span>}
         </div>
       </div>
     </nav>

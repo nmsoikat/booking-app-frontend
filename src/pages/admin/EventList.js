@@ -27,7 +27,6 @@ export default function AdminEventList() {
             const { data } = await axios.get(`/admin/events/${id}`)
             setEventDetails(data)
             openModal()
-            console.log("🚀 ~ data:", data);
         } catch (error) { }
     };
 

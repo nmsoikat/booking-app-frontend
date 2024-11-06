@@ -44,7 +44,6 @@ const EventPopupForm = ({ isOpen, onClose, eventDetails }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         // Handle the submit logic here (e.g., send data to an API or update state)
-        console.log('Form submitted:', formData);
         const newFormData = new FormData();
         newFormData.append("title", formData.title);
         newFormData.append("total_seat", formData.total_seat);
@@ -57,11 +56,9 @@ const EventPopupForm = ({ isOpen, onClose, eventDetails }) => {
         try {
             if (eventDetails?.id) {
                 const { data } = await axios.put(`/admin/events/${eventDetails?.id}`, newFormData)
-                console.log("🚀 ~ data:", data);
                 toast.success('Event Updated successfully!')
             } else {
                 const { data } = await axios.post('/admin/events', newFormData)
-                console.log("🚀 ~ data:", data);
                 toast.success('Event created successfully!')
             }
 

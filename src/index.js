@@ -13,7 +13,6 @@ axios.defaults.baseURL = 'http://localhost:9090'
 
 // Global Interceptor
 axios.interceptors.request.use((req) => {
-  // console.log("🚀 ~ req:", req);
   if (sessionStorage.getItem('token')) {
     req.headers.set({ Authorization: `Bearer ${sessionStorage.getItem('token')}` })
   }
@@ -23,7 +22,6 @@ axios.interceptors.request.use((req) => {
 
 axios.interceptors.response.use(
   (res) => {
-    // console.log("🚀 ~ res:", res);
     return res.data;
   },
   (err) => {
