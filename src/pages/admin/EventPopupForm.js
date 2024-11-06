@@ -1,8 +1,11 @@
 import axios from 'axios';
+import moment from 'moment';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 const EventPopupForm = ({ isOpen, onClose, eventDetails }) => {
+    const [thumbnailPreviewUrl, setThumbnailPreviewUrl] = useState('')
+
     // Form state
     const [formData, setFormData] = useState({
         title: '',
@@ -19,11 +22,15 @@ const EventPopupForm = ({ isOpen, onClose, eventDetails }) => {
             title: eventDetails.title || '',
             total_seat: eventDetails.total_seat || '',
             location: eventDetails.location || '',
-            start_time: eventDetails.start_time || '',
-            end_time: eventDetails.end_time || '',
+            start_time: eventDetails.start_time ? moment(eventDetails.start_time).format('YYYY-MM-DDTHH:mm') : '',
+            end_time: eventDetails.end_time ? moment(eventDetails.end_time).format('YYYY-MM-DDTHH:mm') : '',
             description: eventDetails.description || '',
-            thumbnail: eventDetails.thumbnail || '',
+            // thumbnail: eventDetails.thumbnail || '',
         })
+
+        if (eventDetails.id) {
+            setThumbnailPreviewUrl(eventDetails.thumbnail ? `${process.env.REACT_APP_PUBLIC_EVENT_IMAGE}/${eventDetails.thumbnail}` : '')
+        }
     }, [eventDetails])
 
     const handleChange = (e) => {
@@ -48,10 +55,17 @@ const EventPopupForm = ({ isOpen, onClose, eventDetails }) => {
         newFormData.append("thumbnail", formData.thumbnail);
 
         try {
-            const { data } = await axios.post('/admin/events', newFormData)
-            console.log("🚀 ~ data:", data);
-            toast.success('Event created successfully!')
-            onClose(); // Close the form after submission
+            if (eventDetails?.id) {
+                const { data } = await axios.put(`/admin/events/${eventDetails?.id}`, newFormData)
+                console.log("🚀 ~ data:", data);
+                toast.success('Event Updated successfully!')
+            } else {
+                const { data } = await axios.post('/admin/events', newFormData)
+                console.log("🚀 ~ data:", data);
+                toast.success('Event created successfully!')
+            }
+
+            handleCancel()
         } catch (error) { }
 
     };
@@ -66,7 +80,7 @@ const EventPopupForm = ({ isOpen, onClose, eventDetails }) => {
             description: '',
             thumbnail: '',
         })
-        onClose(); // Close the form without submitting
+        onClose();
     };
 
     // Handle file input change (thumbnail upload)
@@ -81,7 +95,7 @@ const EventPopupForm = ({ isOpen, onClose, eventDetails }) => {
     };
 
     // Image preview for the thumbnail
-    // const thumbnailPreview = formData.thumbnail ? URL.createObjectURL(formData.thumbnail) : null;
+    const thumbnailPreview = formData.thumbnail ? URL.createObjectURL(formData.thumbnail) : null;
 
 
     return (
@@ -142,7 +156,7 @@ const EventPopupForm = ({ isOpen, onClose, eventDetails }) => {
                                     <input
                                         type="datetime-local"
                                         name="start_time"
-                                        value={formData.start_date}
+                                        value={formData.start_time}
                                         onChange={handleChange}
                                         className="mt-1 block w-full p-3 border border-gray-300 rounded-lg"
                                         required
@@ -153,7 +167,7 @@ const EventPopupForm = ({ isOpen, onClose, eventDetails }) => {
                                     <input
                                         type="datetime-local"
                                         name="end_time"
-                                        value={formData.end_date}
+                                        value={formData.end_time}
                                         onChange={handleChange}
                                         className="mt-1 block w-full p-3 border border-gray-300 rounded-lg"
                                         required
@@ -170,7 +184,6 @@ const EventPopupForm = ({ isOpen, onClose, eventDetails }) => {
                                     className="mt-1 block w-full p-3 border border-gray-300 rounded-lg"
                                     placeholder="Enter event description"
                                     rows="4"
-                                    required
                                 />
                             </div>
 
@@ -183,10 +196,9 @@ const EventPopupForm = ({ isOpen, onClose, eventDetails }) => {
                                     accept="image/*"
                                     onChange={handleFileChange}
                                     className="mt-1 block w-full p-3 border border-gray-300 rounded-lg"
-                                    required
                                 />
                                 {/* Display image preview if thumbnail is selected */}
-                                {/* {thumbnailPreview && (
+                                {thumbnailPreview ? (
                                     <div className="mt-3">
                                         <img
                                             src={thumbnailPreview}
@@ -194,7 +206,15 @@ const EventPopupForm = ({ isOpen, onClose, eventDetails }) => {
                                             className="w-32 h-32 object-cover rounded-lg"
                                         />
                                     </div>
-                                )} */}
+                                ) : thumbnailPreviewUrl && (
+                                    <div className="mt-3">
+                                        <img
+                                            src={thumbnailPreviewUrl}
+                                            alt="Thumbnail Preview"
+                                            className="w-32 h-32 object-cover rounded-lg"
+                                        />
+                                    </div>
+                                )}
                             </div>
 
                             {/* Action Buttons */}
@@ -210,7 +230,7 @@ const EventPopupForm = ({ isOpen, onClose, eventDetails }) => {
                                     type="submit"
                                     className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
                                 >
-                                    Submit
+                                    {eventDetails?.id ? 'Update' : 'Submit'}
                                 </button>
                             </div>
                         </form>

@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import EventPopupForm from './EventPopupForm';
 import toast from 'react-hot-toast';
+import moment from 'moment';
 
 export default function AdminEventList() {
     const [eventList, setEventList] = useState([]);
@@ -9,7 +10,10 @@ export default function AdminEventList() {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const openModal = () => setIsModalOpen(true);
-    const closeModal = () => setIsModalOpen(false);
+    const closeModal = () => {
+        setIsModalOpen(false)
+        getEventList();
+    };
     useEffect(() => { getEventList() }, [])
 
 
@@ -30,6 +34,7 @@ export default function AdminEventList() {
     const handleDelete = async (id) => {
         try {
             const { data } = await axios.delete(`/admin/events/${id}`)
+            getEventList();
             toast.success("Event deleted successfully!")
         } catch (error) { }
     };
@@ -72,8 +77,8 @@ export default function AdminEventList() {
                                     <td className="px-6 py-4">{event.title}</td>
                                     <td className="px-6 py-4">{event.total_seat}</td>
                                     <td className="px-6 py-4">{event.sold_out_seat}</td>
-                                    <td className="px-6 py-4">{event.start_time}</td>
-                                    <td className="px-6 py-4">{event.end_time}</td>
+                                    <td className="px-6 py-4"> {moment(event.start_time).format('MMMM Do YYYY')}</td>
+                                    <td className="px-6 py-4"> {moment(event.end_time).format('MMMM Do YYYY')}</td>
                                     <td className="px-6 py-4">{event.location}</td>
                                     <td className="px-6 py-4">{event.description}</td>
                                     <td className="px-6 py-4 text-center">

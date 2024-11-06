@@ -11,10 +11,10 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-gray-800 p-4">
+    <nav className="bg-orange-400 p-4">
       <div className="container mx-auto flex items-center justify-between">
         <div className="space-x-4">
-          <Link to="/" className="text-white">Events</Link>
+          <Link to="/" className="text-white text-base">Events</Link>
         </div>
 
         <div className="flex items-center space-x-4">

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
     return (
-        <section className="relative bg-gradient-to-r from-blue-500 to-indigo-600 text-white">
+        <section className="relative bg-gradient-to-r from-rose-300 to-orange-300 text-white">
             {/* Background image */}
             <div className="absolute inset-0 bg-cover bg-center bg-opacity-50" style={{ backgroundImage: 'url(https://via.placeholder.com/1920x1080)' }}></div>
 
